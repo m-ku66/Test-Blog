@@ -1,13 +1,14 @@
+"use client";
 import React from "react";
 import Login from "../components/Login";
+import useAuth from "../lib/hooks/useAuth";
 
 const FeedLayoutComponent = ({
   children,
 }: {
   children: React.ReactElement;
 }) => {
-  const isAuthenticated = true;
-  return isAuthenticated ? (
+  return useAuth() ? (
     <div>{children}</div>
   ) : (
     <div>

@@ -1,17 +1,55 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
+import { auth } from "../lib/firebase/client";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 
 const Login = () => {
+  const [loading, setloading] = useState<boolean>(false); // state to manage loading
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    let email = e.currentTarget.email.value;
-    let pass = e.currentTarget.password.value;
-    // console.log(email, pass);
+    let email = e.currentTarget.email.value; // storing the user inputted email
+    let pass = e.currentTarget.password.value; // storing the ser inputted password
+
+    setloading(true); // starting the loading cycle
+
+    signInWithEmailAndPassword(auth, email, pass)
+      .then((userCredentials) => {
+        console.log(userCredentials);
+        setloading(false);
+      })
+      .catch((error) => {
+        alert(
+          `Error: ${error} has occured. Please contact the admin of this app`
+        );
+        setloading(false);
+      }); // Use Firebase's signIn functions, log the user information, end loading cycle, and alert the client in the case of an error
   }
 
   function handleSignUp() {
     let email = document.getElementsByName("email")[0] as HTMLInputElement;
     let pass = document.getElementsByName("password")[0] as HTMLInputElement;
+
+    setloading(true);
+
+    createUserWithEmailAndPassword(auth, email.value, pass.value)
+      .then((userCredentials) => {
+        console.log("New user: ", userCredentials);
+        setloading(false);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMsg = error.message;
+        console.log(error);
+        alert(
+          `Error "${errorCode}: ${errorMsg}" has occured. Either contact the admin of this app or try again later...`
+        );
+        setloading(false);
+      });
   }
 
   return (
