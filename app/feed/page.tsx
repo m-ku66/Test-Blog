@@ -7,7 +7,7 @@ import { auth } from "../lib/firebase/client";
 import { useRouter } from "next/navigation";
 import useAuth from "../lib/hooks/useAuth";
 import { db } from "../lib/firebase/client";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 
 const FeedComponent = () => {
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
@@ -19,27 +19,42 @@ const FeedComponent = () => {
   useEffect(() => {
     console.log("useEffect called");
 
-    if (user) {
-      const fetchPosts = async () => {
-        try {
-          console.log("Fetching posts for user:", user?.uid);
-          const postRef = collection(db, "users", user?.uid, "posts");
-          const querySnapshot = await getDocs(postRef);
-          const postCollection = querySnapshot.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id,
-          }));
+    const fetchPosts = async () => {
+      try {
+        console.log("Fetching all posts");
+        const postRef = collection(db, "posts"); // Query the top-level posts collection
+        const q = query(postRef, orderBy("timestamp", "desc")); // Order by timestamp
+        const querySnapshot = await getDocs(q);
+        console.log("Query snapshot:", querySnapshot);
+
+        if (!querySnapshot.empty) {
+          const postCollection = querySnapshot.docs
+            .map((doc) => {
+              const data = doc.data();
+              if (!data.timestamp) {
+                console.warn(
+                  `Document ${doc.id} is missing the timestamp field`
+                );
+                return null;
+              }
+              return {
+                ...data,
+                id: doc.id,
+              };
+            })
+            .filter(Boolean);
           setBlogPosts(postCollection);
           console.log("Fetched blog posts:", postCollection);
-        } catch (error) {
-          console.error("Error fetching posts: ", error);
+        } else {
+          console.log("No posts found");
         }
-      };
-      fetchPosts();
-    } else {
-      console.log("User is null or undefined");
-    }
-  }, [user]);
+      } catch (error) {
+        console.error("Error fetching posts: ", error);
+      }
+    };
+
+    fetchPosts();
+  }, []); // Removed user dependency to fetch posts for all users
 
   const handleSignout = () => {
     signOut(auth);

@@ -1,11 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import {
-  setDoc,
-  collection,
-  doc,
-} from "firebase/firestore";
+import { setDoc, collection, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase/client";
 import useAuth from "../lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
@@ -21,6 +17,9 @@ const postCreationComponent = () => {
       content: e.currentTarget["post-content"].value,
       dateCreated: new Date(),
       id: new Date().getTime().toString() + "post",
+      author: user?.email,
+      authorId: user?.uid,
+      timestamp: serverTimestamp(),
     };
 
     /**
@@ -32,10 +31,13 @@ const postCreationComponent = () => {
      *                                 V
      * Database => collection name => collection item => collection item's items
      */
-    const postRef = collection(db, "users", user?.uid, "posts"); // create a user table in our db and give each user a post table
+    // const postRef = collection(db, "users", user?.uid, "posts"); // create a user table in our db and give each user a post table
+
+    const globalPostRef = collection(db, "posts"); // create a post table in our db. It's not attached to any user, allowing multiple users to access its contents
 
     try {
-      await setDoc(doc(postRef), postObj); // create a data reference using postObj and add it to the collection our postRef is pointing to, then push to db
+      // await setDoc(doc(postRef), postObj); // create a data reference using postObj and add it to the collection our postRef is pointing to, then push to db
+      await setDoc(doc(globalPostRef), postObj); // create a data reference using postObj and add it to the collection our global postRef is pointing to, then push to db
     } catch (error) {
       console.log(error);
     } finally {
@@ -61,6 +63,7 @@ const postCreationComponent = () => {
             name="post-title"
             id="postTitle"
             placeholder="Enter a title"
+            required
           />
         </h1>
         <hr />
@@ -70,6 +73,8 @@ const postCreationComponent = () => {
             name="post-content"
             id="postContent"
             placeholder="What's your post about?"
+            maxLength={3000}
+            required
           ></textarea>
           <button
             className="outline outline-1 outline-black p-2 bg-black rounded-md text-white hover:bg-white hover:text-black duration-150"
