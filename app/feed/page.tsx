@@ -62,7 +62,7 @@ const FeedComponent = () => {
   };
 
   return (
-    <div className="px-10 container max-w-full h-screen flex flex-col items-center">
+    <div className="fade2 px-10 container max-w-full h-screen flex flex-col items-center">
       <div className="w-full p-5 flex justify-between">
         <h1
           onClick={handleSignout}
@@ -70,7 +70,20 @@ const FeedComponent = () => {
         >
           Logout
         </h1>
-        <h1 className="text-[2rem] font-semibold select-none">Your Feed</h1>
+        <div className="flex flex-col items-center gap-3">
+          <h1
+            onClick={() => router.push("/feed")}
+            className="cursor-pointer text-[2rem] font-semibold select-none"
+          >
+            Feed
+          </h1>
+          <h2
+            onClick={() => router.push(`/feed/userFeed/${user?.email}`)}
+            className="cursor-pointer text-[1rem] select-none text-neutral-400 hover:text-black"
+          >
+            Your Posts
+          </h2>
+        </div>
         <h1
           onClick={() => router.push("/create")}
           className="text-neutral-400 hover:text-black duration-150 cursor-pointer select-none"
@@ -78,7 +91,7 @@ const FeedComponent = () => {
           Create Post
         </h1>
       </div>
-      <div className="px-10 w-full h-full flex flex-wrap justify-center overflow-x-hidden">
+      <div className="fade3 px-10 w-full h-full flex flex-wrap justify-center overflow-x-hidden">
         {blogPosts.length > 0 ? (
           blogPosts.map((blogPost: any) => (
             <div key={blogPost.id} className="m-3 cursor-pointer">

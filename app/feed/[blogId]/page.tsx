@@ -71,11 +71,6 @@ const PostReadingPage = ({ params }: { params: { blogId: string } }) => {
           <div className="flex flex-col gap-10 w-[60%] min-h-fit">
             <p className="text-neutral-700">{post.content}</p>
             <p className="text-[0.7rem] text-neutral-400">{`created by: ${post.author}`}</p>
-            {/* Render the post content */}
-            <div className="flex justify-between w-full min-h-fit">
-              <p>Like Post</p> {/* Render the "Like Post" button */}
-              <p>Save Post</p> {/* Render the "Save Post" button */}
-            </div>
           </div>
         </>
       ) : (
