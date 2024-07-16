@@ -113,7 +113,7 @@ const UserFeedComponent = ({ params }: { params: { user: string } }) => {
         {blogPosts.length > 0 ? (
           blogPosts.map((blogPost: any) => (
             <div key={blogPost.id} className="m-3 cursor-pointer">
-              <Link href={`/feed/${blogPost.id}`}>
+              <Link href={`/feed/userFeed/${userEmail}/${blogPost.id}`}>
                 <BlogItem blogPost={blogPost} />
               </Link>
             </div>
