@@ -109,7 +109,7 @@ const UserFeedComponent = ({ params }: { params: { user: string } }) => {
           Create Post
         </h1>
       </div>
-      <div className="fade3 px-10 w-full h-full flex flex-wrap justify-center overflow-x-hidden">
+      <div className="fade3 px-10 w-full h-full flex flex-wrap justify-start overflow-x-hidden">
         {blogPosts.length > 0 ? (
           blogPosts.map((blogPost: any) => (
             <div key={blogPost.id} className="m-3 cursor-pointer">
